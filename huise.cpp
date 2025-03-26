@@ -1,26 +1,37 @@
 #include <stdio.h>
 #include <math.h>
-// #include "huise.txt"
 int real_time = 7;
 // 定义一个全局数组用于存储每天的包裹数量
-// int count[16] = {0}; // 假设最多存储16天的数据
-int count[16] = {0,300,520,530,540,576,637,800}; // Increased size to accommodate additional values
+int count[16] = {0}; // 假设最多存储16天的数据
+
 // 从文件 "huise.txt" 中读取数据并初始化 count 数组
 // 在分析函数中调用文件加载函数
-// Define the load_count_from_file function or remove this line if unnecessary
 void load_data_from_file() {
     FILE* file = fopen("huise.txt", "r");
     if (file == NULL) {
         printf("无法打开文件 huise.txt\n");
         return;
     }
-    for (int i = 0; i < 16 && fscanf(file, "%d", &count[i]) == 1; ++i);
+    for (int i = 0; i <= real_time && fscanf(file, "%d", &count[i]) == 1; ++i);
     fclose(file);
 }
 
 // 自定义四舍五入函数
 int custom_round(double num) {
 	return (int)(num + 0.5);
+}
+
+// 保存数据到文件
+void save_data_to_file() {
+    FILE* file = fopen("huise.txt", "w");
+    if (file == NULL) {
+        printf("无法保存文件 huise.txt\n");
+        return;
+    }
+    for (int i = 0; i <= real_time + 1; i++) {
+        fprintf(file, "%d\n", count[i]);
+    }
+    fclose(file);
 }
 
 // 自定义数据分析函数
@@ -122,6 +133,7 @@ int* analysis(){
 	// printf("The estimated number of packages is:%d", custom_round(p));
 	// printf("\n");
 	count[real_time + 1] = custom_round(p);
+	save_data_to_file(); // 新增保存操作
 	return count;
 }
 
@@ -133,6 +145,9 @@ extern "C" {
     }
     // 获取数组长度
 	size_t get_array_length() {
-		return sizeof(count) / sizeof(count[0]);
+		return real_time + 1; // 返回数组长度
+	}
+	void load(){
+		load_data_from_file();
 	}
 }
