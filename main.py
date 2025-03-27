@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import matplotlib.patheffects as path_effects
 import ctypes
 from watchdog.observers import Observer
@@ -15,12 +16,13 @@ lib1.get_array_length.restype = ctypes.c_size_t
 # 初始化图表（增大画布尺寸）
 fig, ax = plt.subplots(figsize=(12, 6), facecolor='#f5f5f5')
 plt.rcParams['font.family'] = 'Times New Roman, SimSun'
+fig.patch.set_facecolor('#000000')  # 设置绘图区外的背景颜色
 
 # 设置图表样式
 ax.set_facecolor('#fafafa')  # 绘图区背景色
-ax.set_title('Real-time line chart', fontsize=16, pad=20, color='#2f2f2f')
-ax.set_xlabel('X axis', fontsize=12, labelpad=10, color='#444444')
-ax.set_ylabel('Y axis', fontsize=12, labelpad=10, color='#444444')
+ax.set_title('Real-time line chart', fontsize=16, pad=20, color='#9acd32')
+ax.set_xlabel('X axis', fontsize=12, labelpad=10, color='#9acd32')
+ax.set_ylabel('Y axis', fontsize=12, labelpad=10, color='#9acd32')
 
 # 设置坐标轴样式
 ax.spines['top'].set_visible(False)
@@ -33,7 +35,7 @@ ax.tick_params(axis='both', colors='#666666', labelsize=10)
 ax.grid(True, linestyle='--', linewidth=0.5, color='#c0c0c0', alpha=0.7)
 
 # 创建线条（深蓝色带阴影效果）
-line, = ax.plot([], [], lw=2.5, color='#1f77b4', 
+line, = ax.plot([], [], lw=2.5, color='#fafafa', 
                marker='o', markersize=4, markerfacecolor='#ffffff',
                markeredgewidth=1, markeredgecolor='#1f77b4',
                path_effects=[path_effects.withStroke(linewidth=3, foreground="#1f77b480")])
@@ -42,7 +44,7 @@ line, = ax.plot([], [], lw=2.5, color='#1f77b4',
 class FileChangeHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if "huise.txt" in event.src_path:
-            time.sleep(1.5)
+            time.sleep(1.0)
             update_plot()
 
 # 更新图表函数（修复x/y长度问题）
@@ -60,6 +62,9 @@ def update_plot():
     ax.relim()
     ax.autoscale_view()
     ax.set_xlim(left=0, right=max(x)+1 if x else 10)  # 确保空数据时正常显示
+    # 加载图片并设置为背景
+    img = mpimg.imread("background.png")  # 替换为本地图片路径
+    ax.imshow(img, aspect='auto', extent=[0, length + 2, 0, max(y) + 100], alpha=0.9)  # 调整 extent 和 alpha
     plt.draw()
 
 # 初始化数据
