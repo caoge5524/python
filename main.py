@@ -19,7 +19,7 @@ plt.rcParams['font.family'] = 'Times New Roman, SimSun'
 fig.patch.set_facecolor('#000000')  # 设置绘图区外的背景颜色
 
 # 设置图表样式
-ax.set_facecolor('#fafafa')  # 绘图区背景色
+ax.set_facecolor('#808080')  # 绘图区背景色
 ax.set_title('Real-time line chart', fontsize=16, pad=20, color='#9acd32')
 ax.set_xlabel('X axis', fontsize=12, labelpad=10, color='#9acd32')
 ax.set_ylabel('Y axis', fontsize=12, labelpad=10, color='#9acd32')
@@ -29,7 +29,7 @@ ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['bottom'].set_color('#808080')
 ax.spines['left'].set_color('#808080')
-ax.tick_params(axis='both', colors='#666666', labelsize=10)
+ax.tick_params(axis='both', colors='#00ffff', labelsize=10)
 
 # 添加网格线
 ax.grid(True, linestyle='--', linewidth=0.5, color='#c0c0c0', alpha=0.7)
@@ -63,8 +63,8 @@ def update_plot():
     ax.autoscale_view()
     ax.set_xlim(left=0, right=max(x)+1 if x else 10)  # 确保空数据时正常显示
     # 加载图片并设置为背景
-    img = mpimg.imread("background.png")  # 替换为本地图片路径
-    ax.imshow(img, aspect='auto', extent=[0, length + 2, 0, max(y) + 100], alpha=0.9)  # 调整 extent 和 alpha
+    # img = mpimg.imread("background.png")  # 替换为本地图片路径
+    # ax.imshow(img, aspect='auto', extent=[0, length + 2, 0, max(y) + 100], alpha=0.9)  # 调整 extent 和 alpha
     plt.draw()
 
 # 初始化数据
