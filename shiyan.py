@@ -26,7 +26,13 @@ class Dashboard:
         self.y = []
         self.fig, self.ax = self.create_figure()
         self.stats = pn.widgets.StaticText(value='Statistics: Waiting for data...')
-        self.alert = pn.pane.Alert(object='Threshold exceeded!', alert_type='danger', visible=False)
+        self.alert = pn.pane.Alert(
+            object='<div style="font-size:20px;">The number of packages per day exceeds the threshold, and it is recommended to divert</div>',
+            alert_type='danger',
+            visible=False,
+            width=600,
+            height=200
+        )
 
         # 创建控制面板
         self.refresh_rate = pn.widgets.IntSlider(name='Refresh Rate (ms)', value=1000, start=500, end=5000)
