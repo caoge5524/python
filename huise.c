@@ -1,12 +1,43 @@
 #include <stdio.h>
 #include <math.h>
-int real_time = 7;
 // 定义一个全局数组用于存储每天的包裹数量
-int count[16] = {0}; // 假设最多存储16天的数据
+int count[366] = {0}; // 假设最多存储365天的数据
+// 函数声明
+void load_data_from_file();
+void save_data_to_file();
+int* analysis();
+void set_real_time(int value);
+int* get_array();
+size_t get_array_length();
+void load();
+
+// 暴露的接口
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    // 获取数组指针
+    int* get_array(int real_time) {
+        return analysis(real_time);
+    }
+
+    // 获取数组长度
+    size_t get_array_length(int real_time) {
+        return real_time + 1; // 返回数组长度
+    }
+
+    // 加载数据
+    void load(int real_time) {
+        load_data_from_file(real_time);
+    }
+
+#ifdef __cplusplus
+}
+#endif
 
 // 从文件 "huise.txt" 中读取数据并初始化 count 数组
 // 在分析函数中调用文件加载函数
-void load_data_from_file() {
+void load_data_from_file(int real_time) {
     FILE* file = fopen("huise.txt", "r");
     if (file == NULL) {
         printf("无法打开文件 huise.txt\n");
@@ -22,29 +53,34 @@ int custom_round(double num) {
 }
 
 // 保存数据到文件
-void save_data_to_file() {
-    FILE* file = fopen("huise.txt", "w");
+void save_data_to_file(int real_time) {
+    // 动态生成文件名，例如 "huise_real_time_7.txt"
+    char filename[50];
+    sprintf(filename, "huise_real_time_%d.txt", real_time);
+
+    FILE* file = fopen(filename, "w");
     if (file == NULL) {
-        printf("无法保存文件 huise.txt\n");
+        printf("无法保存文件 %s\n", filename);
         return;
     }
     for (int i = 0; i <= real_time + 1; i++) {
         fprintf(file, "%d\n", count[i]);
     }
     fclose(file);
+    // printf("数据已保存到文件: %s\n", filename);
 }
 
 // 自定义数据分析函数
-int* analysis(){
+int* analysis(int real_time){
 	// 第一个数据分析预测函数(灰色预测)，适用于real_time较小(不超过15天)情况
     // 读取每天的包裹数量
-	double x0[16] = { 0 }; // 原始序列，real_time不超过15天
+	double x0[366] = { 0 }; // 原始序列，real_time不超过365天
     for (int i = 0; i <= real_time; i++)
     {
         x0[i] = count[i]; // count数组存储日包裹数
     }
 	//定义累加数组x1，累加数组大小为real_time
-	double x1[16] = { 1 };
+	double x1[366] = { 1 };
 	//x1累加数组的第一个数就是x0原始数组的第一个数
 	x1[0] = x0[0];
 	//x1累加数组除去第一个数的后面数
@@ -133,21 +169,6 @@ int* analysis(){
 	// printf("The estimated number of packages is:%d", custom_round(p));
 	// printf("\n");
 	count[real_time + 1] = custom_round(p);
-	save_data_to_file(); // 新增保存操作
+	save_data_to_file(real_time); // 新增保存操作
 	return count;
-}
-
-// 暴露的接口
-extern "C" {
-    // 获取数组指针
-    int* get_array() {
-        return analysis();
-    }
-    // 获取数组长度
-	size_t get_array_length() {
-		return real_time + 1; // 返回数组长度
-	}
-	void load(){
-		load_data_from_file();
-	}
 }

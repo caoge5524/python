@@ -9,6 +9,7 @@ import numpy as np
 from threading import Lock
 
 pn.extension()
+real_time = 12
 
 # 加载共享库
 lib1 = ctypes.CDLL("./huise.dll")
@@ -81,20 +82,20 @@ class Dashboard:
     def update_data(self):
         """更新数据并刷新图表"""
         with lock:
-            lib1.load()
-            arr = lib1.get_array()
-            length = lib1.get_array_length()
+            lib1.load(real_time)  # 加载数据
+            arr = lib1.get_array(real_time)  # 获取数组
+            length = lib1.get_array_length(real_time)  # 获取数组长度
             
             valid_indices = [i for i in range(length) if arr[i+1] > 0]
             self.x = [i+1 for i in valid_indices]
             self.y = [arr[i+1] for i in valid_indices]
             
-            # 更新图表
+            # 更新折线图
             self.line.set_data(self.x, self.y)
             self.ax.relim()
             self.ax.autoscale_view()
             self.ax.set_xlim(left=0, right=max(self.x)+1 if self.x else 10)
-            
+
             # 更新柱状图
             if not self.bars:
                 # 如果柱状图尚未初始化，创建柱状图
