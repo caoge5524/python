@@ -65,6 +65,9 @@ class Dashboard:
         self.line, = ax.plot([], [], lw=2.5, color='#fafafa', 
                            marker='o', markersize=4, markerfacecolor='#ffffff',
                            path_effects=[path_effects.withStroke(linewidth=3, foreground="#1f77b480")])
+        # 添加柱状图
+        self.bars = ax.bar([], [], color='#1f77b4', alpha=0.7, width=0.5)
+        
         return fig, ax
 
     def create_plot_pane(self):
@@ -92,6 +95,16 @@ class Dashboard:
             self.ax.autoscale_view()
             self.ax.set_xlim(left=0, right=max(self.x)+1 if self.x else 10)
             
+            # 更新柱状图
+            if not self.bars:
+                # 如果柱状图尚未初始化，创建柱状图
+                self.bars = self.ax.bar(self.x, self.y, color='#1f77b4', alpha=0.7, width=0.5)
+            else:
+                # 更新已有柱状图的高度和位置
+                for bar, x, height in zip(self.bars, self.x, self.y):
+                    bar.set_x(x - 0.25)  # 调整柱状图的 x 位置
+                    bar.set_height(height)
+
             # 更新统计信息
             average_value = np.mean(self.y) if self.y else 0
             stats_text = f"""
@@ -105,6 +118,8 @@ class Dashboard:
             # 触发警报
             if self.y and max(self.y) > self.alert_threshold.value:
                 self.alert.visible = True
+            else:
+                self.alert.visible = False
                 
     def start_watcher(self):
         """启动文件监听"""
