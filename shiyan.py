@@ -9,7 +9,7 @@ import numpy as np
 from threading import Lock
 
 pn.extension()
-real_time = 12
+real_time = 120
 
 # 加载共享库
 lib1 = ctypes.CDLL("./huise.dll")
@@ -37,7 +37,7 @@ class Dashboard:
 
         # 创建控制面板
         self.refresh_rate = pn.widgets.IntSlider(name='Refresh Rate (ms)', value=1000, start=500, end=5000)
-        self.alert_threshold = pn.widgets.FloatInput(name='Alert Threshold', value=1000, step=10)
+        self.alert_threshold = pn.widgets.FloatInput(name='Alert Threshold', value=1000, step=50)
 
         # 仪表盘布局
         self.template = pn.template.FastListTemplate(
