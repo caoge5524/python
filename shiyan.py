@@ -9,7 +9,7 @@ import numpy as np
 from threading import Lock
 
 pn.extension()
-real_time = 120
+real_time = 100
 
 # 加载共享库
 lib1 = ctypes.CDLL("./huise.dll")
@@ -110,9 +110,9 @@ class Dashboard:
             average_value = np.mean(self.y) if self.y else 0
             stats_text = f"""
             Data Statistics:
-            - Predicted Value: {self.y[-1] if self.y else 'N/A'}
-            - Average: {average_value:.2f}
-            - Max Value: {max(self.y) if self.y else 0}
+            ---- Predicted Value: {self.y[-1] if self.y else 'N/A'}
+            ---- Average: {average_value:.2f}
+            ---- Max Value: {max(self.y) if self.y else 0}
             """
             self.stats.value = stats_text
             
